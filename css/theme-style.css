@@ -1,0 +1,28 @@
+/* THEME TOGGLE STYLING */
+#theme-toggle {
+	background: none;
+	border: 0;
+	cursor: pointer;
+	padding: var(--size-2);
+
+	&:hover,
+	&:focus-visible {
+		outline: 0;
+		/* background: var(--svg-hover); */
+		border-radius: 50%;
+	}
+
+	& svg {
+		/* fill: var(--color-primary); */
+	}
+}
+#theme-toggle #toggle-circle {
+	transition: transform 500ms ease-out;
+}
+body[data-theme="light"] #theme-toggle #toggle-circle {
+	transform: translateX(-14%);
+}
+body[data-theme="dark"] #theme-toggle #toggle-circle {
+	transform: translateX(0);
+}
+/* THEME TOGGLE STYLING ENDS */

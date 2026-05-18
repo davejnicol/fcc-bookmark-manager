@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Bookmark Manager - LocalStorage</title>
+		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/theme-style.css" />
+	</head>
+	<body>
+		<header>
+			<div class="branding">
+				<div class="logo"></div>
+				<div class="name">Book<span>mark</span> Manager</div>
+			</div>
+			<div class="theme-switcher">
+				<button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark theme">
+					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 180 180">
+						<g id="toogle-sun">
+							<path
+								d="M153.64,116.36l26.36-26.36-26.36-26.36V26.36h-37.28L90,0l-26.36,26.36H26.36v37.28L0,90l26.36,26.36v37.28h37.28l26.36,26.36,26.36-26.36h37.28v-37.28ZM90,140c-27.61,0-50-22.39-50-50s22.39-50,50-50,50,22.39,50,50-22.39,50-50,50Z"
+							/>
+						</g>
+						<g id="toggle-circle"><path d="M127.5,90c0,20.71-16.79,37.5-37.5,37.5s-37.5-16.79-37.5-37.5,16.79-37.5,37.5-37.5,37.5,16.79,37.5,37.5Z" /></g>
+					</svg>
+				</button>
+			</div>
+		</header>
+		<main>
+			<div class="app-container">
+				<div class="input-container">
+					<input type="text" id="bookmark-name" placeholder="Bookmark Name" required />
+					<input
+						type="url"
+						id="bookmark-url"
+						placeholder="Bookmark URL"
+						pattern="https://.*"
+						onfocus="
+							if (this.value === '') {
+								this.value = 'https://';
+								setTimeout(() => this.setSelectionRange(8, 8), 0);
+							}
+						"
+						required
+					/>
+					<button id="add-bookmark" class="btn" data-type="btn-primary" type="submit">Add Bookmark</button>
+				</div>
+
+				<div class="bookmarks-container">
+					<ul class="bookmark-list" id="bookmark-list"></ul>
+				</div>
+			</div>
+		</main>
+		<footer>
+			&copy;
+			<script>
+				document.write(new Date().getFullYear());
+			</script>
+			Bookmark Manager - LocalStorage
+		</footer>
+
+		<script src="js/script.js"></script>
+		<script src="js/theme-toggle.js"></script>
+	</body>
+</html>
