@@ -1,14 +1,55 @@
 :root {
-	--ff-primary: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+	--clr-neutral-100: hsl(60 4% 95%);
+	--clr-neutral-200: hsl(60 4% 82.5%);
+	--clr-neutral-300: hsl(60 4% 70%);
+	--clr-neutral-400: hsl(60 4% 60%);
+	--clr-neutral-500: hsl(60 4% 50%);
+	--clr-neutral-600: hsl(60 4% 40%);
+	--clr-neutral-700: hsl(60 4% 30%);
+	--clr-neutral-800: hsl(60 4% 17.5%);
+	--clr-neutral-900: hsl(60 4% 7.5%);
 
+	--clr-blue-500: hsl(188 62% 50%);
+
+	--ff-primary: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+	--fs-400: 1rem;
+	/* --fs-500: 1.25rem; */
+	/* --fs-600: 1.5rem; */
+	--fs-650: 1.625rem;
+	/* --fw-600: 600; */
+	--fw-700: 700;
+
+	--size-1: 0.375rem;
 	--size-2: 0.5rem;
+	--size-4: 1rem;
+
+	/* For Light Theme */
+	--bg-primary-light: var(--clr-neutral-100);
+	--text-primary-light: var(--clr-neutral-800);
+	--text-secondary-light: var(--clr-blue-500);
+	--svg-border-light: var(--clr-neutral-800);
+	--svg-hover-light: var(--clr-neutral-200);
+
+	/* For Dark Theme */
+	--bg-primary-dark: var(--clr-neutral-800);
+	--text-primary-dark: var(--clr-neutral-200);
+	--text-secondary-dark: var(--clr-blue-500);
+	--svg-border-dark: var(--clr-neutral-600);
+	--svg-hover-dark: var(--clr-neutral-700);
+
+	color-scheme: light;
+	--background-primary: light-dark(var(--bg-primary-light), var(--bg-primary-dark));
+	--color-primary: light-dark(var(--text-primary-light), var(--text-primary-dark));
+	--color-secondary: light-dark(var(--text-secondary-light), var(--text-secondary-dark));
+	--svg-border: light-dark(var(--svg-border-light), var(--svg-border-dark));
+	--svg-hover: light-dark(var(--svg-hover-light), var(--svg-hover-dark));
 }
-/* [data-theme="light"] {
+[data-theme="light"] {
 	color-scheme: light;
 }
 [data-theme="dark"] {
 	color-scheme: dark;
-} */
+}
 
 /* RESET */
 *,
@@ -32,11 +73,72 @@ svg {
 
 /* BASE STYLES */
 body {
+	background: var(--background-primary);
+	color: var(--color-primary);
 	font-family: var(--ff-primary);
+	font-size: var(--fs-400);
 	line-height: 1.4;
 
 	display: grid;
 	grid-template-rows: auto 1fr auto;
 	grid-template-areas: "header" "main" "footer";
 	min-block-size: 100svh;
+}
+header {
+	grid-area: header;
+
+	line-height: 1;
+	padding: var(--size-2);
+}
+main {
+	grid-area: main;
+	padding-inline: var(--size-4);
+}
+footer {
+	grid-area: footer;
+	padding: var(--size-2);
+	text-align: center;
+}
+
+/* HEADER STYLES */
+header {
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+}
+.logo {
+	display: flex;
+	align-items: center;
+	gap: var(--size-1);
+
+	& .name {
+		font-size: var(--fs-650);
+		font-weight: var(--fw-700);
+		letter-spacing: -0.5px;
+
+		& span {
+			color: var(--color-secondary);
+		}
+	}
+
+	& svg {
+		width: 50px;
+	}
+
+	& .svg-border {
+		fill: none;
+		stroke: var(--svg-border);
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-width: 60px;
+	}
+	& .svg-plus {
+		fill-rule: evenodd;
+		stroke-miterlimit: 100;
+		stroke-width: 2px;
+		fill: var(--svg-border);
+	}
+	& .svg-shade {
+		fill: var(--color-secondary);
+	}
 }

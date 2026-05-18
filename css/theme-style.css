@@ -8,12 +8,12 @@
 	&:hover,
 	&:focus-visible {
 		outline: 0;
-		/* background: var(--svg-hover); */
+		background: var(--svg-hover);
 		border-radius: 50%;
 	}
 
 	& svg {
-		/* fill: var(--color-primary); */
+		fill: var(--color-primary);
 	}
 }
 #theme-toggle #toggle-circle {
