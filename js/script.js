@@ -54,27 +54,38 @@ addBookmarkBtn.addEventListener("click", function () {
 
 // Adding bookmark li element to display
 function addBookmark(name, url) {
-    const li = document.createElement("li");
-    li.classList.add("bookmark");
+    const div = document.createElement("div");
+    div.classList.add("bookmark");
 
     const link = document.createElement("a");
     link.href = url;
     link.textContent = name;
     link.target = "_blank";
 
+    const removeContainer = document.createElement("div");
+    removeContainer.className = "remove-container";
+
     const removeButton = document.createElement("button");
-    removeButton.textContent = "Remove";
+    removeButton.textContent = "X";
     removeButton.classList.add("btn");
     removeButton.dataset.type = "btn-secondary";
+
+    const removeTooltip = document.createElement("span");
+    removeTooltip.className = "remove-tooltip";
+    removeTooltip.textContent = "Delete bookmark?";
+
     removeButton.addEventListener("click", function () {
         bookmarkList.removeChild(li);
         removeBookmarkFromStorage(name, url);
     });
 
-    li.appendChild(link);
-    li.appendChild(removeButton);
+    removeContainer.appendChild(removeButton);
+    removeContainer.appendChild(removeTooltip);
 
-    bookmarkList.appendChild(li);
+    div.appendChild(link);
+    div.appendChild(removeContainer);
+
+    bookmarkList.appendChild(div);
 }
 
 // Get bookmarks from local storage, if any
