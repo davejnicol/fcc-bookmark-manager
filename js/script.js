@@ -75,7 +75,7 @@ function addBookmark(name, url) {
     removeTooltip.textContent = "Delete bookmark?";
 
     removeButton.addEventListener("click", function () {
-        bookmarkList.removeChild(li);
+        bookmarkList.removeChild(div);
         removeBookmarkFromStorage(name, url);
     });
 
