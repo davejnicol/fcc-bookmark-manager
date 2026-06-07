@@ -138,7 +138,7 @@ footer {
 	color: contrast-color(var(--_btn-bg));
 	cursor: pointer;
 	padding: var(--size-3);
-	transition: background-color 0.3s ease;
+	transition: all 0.3s ease;
 }
 .btn:hover,
 .btn:focus-visible {
