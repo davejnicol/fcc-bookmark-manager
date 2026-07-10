@@ -30,6 +30,7 @@ Like most projects, always start with the small wins. Create the basic HTML file
 1. Actually, displaying the bookmark list on load
 1. Sorting the bookmark list and checking for duplicate bookmarks with the same URL
 1. Removing or deleting bookmarks
+1. Adding search and sort controls
 
 ### Built with
 

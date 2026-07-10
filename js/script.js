@@ -4,6 +4,12 @@ const addBookmarkBtn = document.getElementById("add-bookmark");
 const allInputs = document.querySelectorAll(".input-container");
 const bookmarkList = document.getElementById("bookmark-list");
 
+const searchBar = document.getElementById("search-bar");
+const toggleSortBtn = document.getElementById("toggle-sort");
+
+// Track current sort state ('alphabetical' or 'chronological')
+let currentSortState = "alphabetical";
+
 document.addEventListener("DOMContentLoaded", loadBookmarks);
 
 // Watch all inputs for enter keydown submission
@@ -14,6 +20,21 @@ allInputs.forEach(input => {
             addBookmarkBtn.click();
         }
     });
+});
+
+// Real-time search listener
+searchBar.addEventListener("input", loadBookmarks);
+
+// Sort toggle listener
+toggleSortBtn.addEventListener("click", function() {
+    if (currentSortState === "alphabetical") {
+        currentSortState = "chronological";
+        toggleSortBtn.textContent = "Sort: Chronological";
+    } else {
+        currentSortState = "alphabetical";
+        toggleSortBtn.textContent = "Sort: Alphabetical";
+    }
+    loadBookmarks();
 });
 
 // Listening for click submission
@@ -52,7 +73,7 @@ addBookmarkBtn.addEventListener("click", function () {
     bookmarkUrlInput.value = "";
 });
 
-// Adding bookmark li element to display
+// Adding bookmark div element to display
 function addBookmark(name, url) {
     const div = document.createElement("div");
     div.classList.add("bookmark");
@@ -97,13 +118,12 @@ function getBookmarksFromStorage() {
 // Save new bookmark to local storage, sort it, and update the UI
 function saveBookmak(name, url) {
     const bookmarks = getBookmarksFromStorage();
+
+    // Chronological tracking relies on array push order (latest is last)
     bookmarks.push({
-        name,
+        name, 
         url,
     });
-
-    // Sort alphabetically by the 'name' property
-    bookmarks.sort((a, b) => a.name.localeCompare(b.name));
 
     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
 
@@ -111,16 +131,31 @@ function saveBookmak(name, url) {
     loadBookmarks();
 }
 
-// Sort and load all bookmarks from local storage
+// Master function handling search filtering, sorting, and UI rendering from local storage
 function loadBookmarks() {
     // Clear the existing list in the DOM to prevent duplicates
     bookmarkList.innerHTML = "";
 
-    const bookmarks = getBookmarksFromStorage();
+    let bookmarks = getBookmarksFromStorage();
 
-    // Ensure the array is sorted upon initial page load
-    bookmarks.sort((a, b) => a.name.localeCompare(b.name));
+    // 1. Apply real-time search filter (matches name OR URL)
+    const query = searchBar.value.toLowerCase().trim();
+    if (query) {
+        bookmarks = bookmarks.filter(bookmark => 
+            bookmark.name.toLowerCase().includes(query) || 
+            bookmark.url.toLowerCase().includes(query)
+        );
+    }
 
+    // 2. Apply sorting condition
+    if (currentSortState === "alphabetical") {
+        bookmarks.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (currentSortState === "chronological") {
+        // Reverse array order so newest bookmarks appear at the top
+        bookmarks.reverse();
+    }
+
+    // 3. Render items
     bookmarks.forEach((bookmark) => addBookmark(bookmark.name, bookmark.url));
 }
 
@@ -130,4 +165,6 @@ function removeBookmarkFromStorage(name, url) {
     bookmarks = bookmarks.filter((bookmark) => bookmark.name !== name || bookmark.url !== url);
 
     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+    // Reload dynamically to update list lengths or filtered visibility states safely
+    loadBookmarks();
 }

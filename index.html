@@ -40,21 +40,29 @@
 		<main>
 			<div class="app-container">
 				<div class="input-container">
-					<input type="text" id="bookmark-name" placeholder="Bookmark Name" required />
-					<input
-						type="url"
-						id="bookmark-url"
-						placeholder="Bookmark URL"
-						pattern="https://.*"
-						onfocus="
-							if (this.value === '') {
-								this.value = 'https://';
-								setTimeout(() => this.setSelectionRange(8, 8), 0);
-							}
-						"
-						required
-					/>
-					<button id="add-bookmark" class="btn" data-type="btn-primary" type="submit">Add Bookmark</button>
+					<div class="bookmark-creation">
+						<input type="text" id="bookmark-name" placeholder="Bookmark Name" required />
+						<input
+							type="url"
+							id="bookmark-url"
+							placeholder="Bookmark URL"
+							pattern="https://.*"
+							onfocus="
+								if (this.value === '') {
+									this.value = 'https://';
+									setTimeout(() => this.setSelectionRange(8, 8), 0);
+								}
+							"
+							required
+						/>
+						<button id="add-bookmark" class="btn" data-type="btn-primary" type="submit">Add Bookmark</button>
+					</div>
+				</div>
+				<div class="controls-container">
+					<div class="controls">
+						<input type="text" id="search-bar" placeholder="Search bookmarks by name or URL..." />
+						<button id="toggle-sort" class="btn" data-sort="alphabetical">Sort: Alphabetical</button>
+					</div>
 				</div>
 
 				<div class="bookmarks-container">

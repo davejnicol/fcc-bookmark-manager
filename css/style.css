@@ -223,13 +223,29 @@ header {
 /* PROJECT STYLES */
 .input-container {
 	background-color: var(--background-secondary);
+	padding: var(--size-4);
+
+	.bookmark-creation {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--size-4);
+	}
+}
+.controls-container {
+	background-color: var(--background-primary-2);
 	margin-bottom: var(--size-4);
 	padding: var(--size-4);
 
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: var(--size-4);
+	.controls {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--size-4);
+		margin: 0 auto;
+		max-width: 120ch;
+		width: 100%;
+	}
 }
 
 input {
