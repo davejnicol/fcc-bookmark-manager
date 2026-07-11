@@ -1,9 +1,11 @@
 const bookmarkNameInput = document.getElementById("bookmark-name");
 const bookmarkUrlInput = document.getElementById("bookmark-url");
+const bookmarkTagsInput = document.getElementById("bookmark-tags");
 const addBookmarkBtn = document.getElementById("add-bookmark");
 const allInputs = document.querySelectorAll(".input-container");
 const bookmarkList = document.getElementById("bookmark-list");
 
+// Search and Sort DOM Elements
 const searchBar = document.getElementById("search-bar");
 const toggleSortBtn = document.getElementById("toggle-sort");
 
@@ -41,6 +43,7 @@ toggleSortBtn.addEventListener("click", function() {
 addBookmarkBtn.addEventListener("click", function () {
     const name = bookmarkNameInput.value.trim();
     const url = bookmarkUrlInput.value.trim();
+    const rawTags = bookmarkTagsInput.value.trim();
 
     if(!name) {
         alert("Please enter a name for the bookmark.");
@@ -49,6 +52,11 @@ addBookmarkBtn.addEventListener("click", function () {
         alert("Please enter a valid URL (ie. https://www.site.com).");
         return;
     }
+
+    // Process comma-separated tags into a clean, lowercase array of strings
+    const tags = rawTags 
+        ? rawTags.split(",").map(tag => tag.trim().toLowerCase()).filter(tag => tag !== "")
+        : [];
 
     // Fetch current data to check for duplicates
     const currentBookmarks = getBookmarksFromStorage();
@@ -65,23 +73,48 @@ addBookmarkBtn.addEventListener("click", function () {
         return; // Stop the function here
     }
 
-    addBookmark(name, url);
-    saveBookmak(name, url);
+    // addBookmark(name, url, tags);
+    saveBookmak(name, url, tags);
 
     // Reset Form
     bookmarkNameInput.value = "";
     bookmarkUrlInput.value = "";
+    bookmarkTagsInput.value = "";
 });
 
 // Adding bookmark div element to display
-function addBookmark(name, url) {
+function addBookmark(name, url, tags = []) {
     const div = document.createElement("div");
     div.classList.add("bookmark");
+
+    // Content container wrapper for structural styling layout
+    const contentDiv = document.createElement("div");
+    contentDiv.classList.add("bookmark-content");
 
     const link = document.createElement("a");
     link.href = url;
     link.textContent = name;
     link.target = "_blank";
+    contentDiv.appendChild(link);
+
+    const urlText = document.createElement("div");
+    urlText.classList.add("bookmark-url");
+    urlText.textContent = url;
+    contentDiv.appendChild(urlText);
+
+    // Build the visual container wrapper for tags
+    if (tags.length > 0) {
+        const tagsContainer = document.createElement("div");
+        tagsContainer.classList.add("tags-container");
+        
+        tags.forEach(tag => {
+            const tagSpan = document.createElement("span");
+            tagSpan.classList.add("tag-pill");
+            tagSpan.textContent = tag;
+            tagsContainer.appendChild(tagSpan);
+        });
+        contentDiv.appendChild(tagsContainer);
+    }
 
     const removeContainer = document.createElement("div");
     removeContainer.className = "remove-container";
@@ -103,7 +136,7 @@ function addBookmark(name, url) {
     removeContainer.appendChild(removeButton);
     removeContainer.appendChild(removeTooltip);
 
-    div.appendChild(link);
+    div.appendChild(contentDiv);
     div.appendChild(removeContainer);
 
     bookmarkList.appendChild(div);
@@ -116,13 +149,14 @@ function getBookmarksFromStorage() {
 }
 
 // Save new bookmark to local storage, sort it, and update the UI
-function saveBookmak(name, url) {
+function saveBookmak(name, url, tags) {
     const bookmarks = getBookmarksFromStorage();
 
     // Chronological tracking relies on array push order (latest is last)
     bookmarks.push({
         name, 
         url,
+        tags,
     });
 
     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
@@ -156,7 +190,7 @@ function loadBookmarks() {
     }
 
     // 3. Render items
-    bookmarks.forEach((bookmark) => addBookmark(bookmark.name, bookmark.url));
+    bookmarks.forEach((bookmark) => addBookmark(bookmark.name, bookmark.url, bookmark.tags));
 }
 
 // Deleted selected bookmark from local storage
