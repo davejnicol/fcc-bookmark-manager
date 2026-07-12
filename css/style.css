@@ -281,6 +281,51 @@ input {
 	}
 }
 
+.tag-input-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--size-2);
+	padding: var(--size-0) var(--size-2);
+}
+.tag-input-wrapper input {
+	/* border: none !important; */
+	/* outline: none !important; */
+	/* flex: 1 1 60px; Allows the input box to shrink and grow dynamically */
+	/* min-width: 60px; Minimum space for the cursor to live */
+	/* padding: 0 !important; */
+	/* margin: 0 !important; */
+	/* box-shadow: none !important; */
+	/* height: 24px; Matches the vertical footprint of your pills */
+	/* background: transparent; */
+}
+/* Style for the pills inside the input field */
+.input-tag-pill {
+	--_pill-bg: var(--color-primary);
+
+	background-color: var(--_pill-bg);
+	border-radius: var(--size-3);
+	color: contrast-color(var(--_pill-bg));
+	font-size: var(--fs-200);
+	padding: var(--size-0) var(--size-2);
+	text-transform: uppercase;
+
+	display: inline-flex;
+	align-items: center;
+	gap: var(--size-1);
+}
+
+.input-tag-pill .remove-tag-btn {
+	background: transparent;
+	border: none;
+	color: contrast-color(var(--_pill-bg));
+	cursor: pointer;
+}
+
+.input-tag-pill .remove-tag-btn:hover {
+	color: var(--btn-secondary-dark);
+}
+
 .bookmarks-container {
 	margin: 0 auto;
 	margin-bottom: var(--size-4);
@@ -349,6 +394,7 @@ input {
 	position: relative;
 
 	& .btn {
+		font-weight: var(--fw-600);
 		padding: var(--size-0) var(--size-1);
 	}
 

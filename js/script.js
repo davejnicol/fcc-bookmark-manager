@@ -28,6 +28,15 @@ allInputs.forEach(input => {
     });
 });
 
+// Array to track current tags typed into the input view
+let activeTags = [];
+const tagWrapper = document.getElementById("tag-wrapper");
+
+// Focus the actual input when clicking anywhere on the wrapper container
+tagWrapper.addEventListener("click", () => {
+    bookmarkTagsInput.focus();
+});
+
 // Real-time search listener
 searchBar.addEventListener("input", loadBookmarks);
 
@@ -47,7 +56,7 @@ toggleSortBtn.addEventListener("click", function() {
 addBookmarkBtn.addEventListener("click", function () {
     const name = bookmarkNameInput.value.trim();
     const url = bookmarkUrlInput.value.trim();
-    const rawTags = bookmarkTagsInput.value.trim();
+    // const rawTags = bookmarkTagsInput.value.trim();
 
     if(!name) {
         alert("Please enter a name for the bookmark.");
@@ -58,9 +67,10 @@ addBookmarkBtn.addEventListener("click", function () {
     }
 
     // Process comma-separated tags into a clean, lowercase array of strings
-    const tags = rawTags 
-        ? rawTags.split(",").map(tag => tag.trim().toLowerCase()).filter(tag => tag !== "")
-        : [];
+    // const tags = rawTags 
+    //     ? rawTags.split(",").map(tag => tag.trim().toLowerCase()).filter(tag => tag !== "")
+    //     : [];
+    const tags = [...activeTags];
 
     // Fetch current data to check for duplicates
     const currentBookmarks = getBookmarksFromStorage();
@@ -84,6 +94,8 @@ addBookmarkBtn.addEventListener("click", function () {
     bookmarkNameInput.value = "";
     bookmarkUrlInput.value = "";
     bookmarkTagsInput.value = "";
+    activeTags = []; // Reset our tracking array
+    renderInputPills(); // Refresh the DOM view to empty out the pills
 });
 
 // Dynamic UI generation with clickable Tag Badges
@@ -132,7 +144,7 @@ function addBookmark(name, url, tags = []) {
     removeContainer.className = "remove-container";
 
     const removeButton = document.createElement("button");
-    removeButton.textContent = "X";
+    removeButton.innerHTML = "&times;";
     removeButton.classList.add("btn");
     removeButton.dataset.type = "btn-secondary";
 
@@ -237,10 +249,107 @@ function updateAutocompleteSuggestions() {
     // Reset old options list layout markup 
     tagsDatalist.innerHTML = "";
 
+    // Parse what the user has typed so far
+    const currentTypedValue = bookmarkTagsInput.value.trim().toLowerCase();
+
     // Generate option elements for autocomplete menu UI drop downs
     uniqueTags.forEach(tag => {
-        const option = document.createElement("option");
-        option.value = tag;
-        tagsDatalist.appendChild(option);
+        // Only suggest if the tag hasn't already been added as a pill
+        if (!activeTags.includes(tag) && tag.includes(currentTypedValue)) {
+            const option = document.createElement("option");
+            option.value = tag;
+
+            tagsDatalist.appendChild(option);
+        }
     });
 }
+
+// Function to render the UI pills inside the input wrapper
+function renderInputPills() {
+    // Remove old pills (keep the input element)
+    const existingPills = tagWrapper.querySelectorAll(".input-tag-pill");
+    existingPills.forEach(pill => pill.remove());
+
+    // Generate new pills in order
+    activeTags.forEach((tag, index) => {
+        const pill = document.createElement("span");
+        pill.classList.add("input-tag-pill");
+        pill.textContent = tag;
+
+        const removeBtn = document.createElement("button");
+        removeBtn.innerHTML = "&times;";
+        removeBtn.classList.add("remove-tag-btn");
+        removeBtn.type = "button";
+        removeBtn.addEventListener("click", (e) => {
+            e.stopPropagation(); // Stop from triggering the input focus
+            activeTags.splice(index, 1);
+            renderInputPills();
+            updateAutocompleteSuggestions();
+        });
+
+        pill.appendChild(removeBtn);
+        tagWrapper.insertBefore(pill, bookmarkTagsInput);
+    });
+
+    // Toggle placeholder text based on whether tags exist
+    if (activeTags.length > 0) {
+        bookmarkTagsInput.removeAttribute("placeholder");
+    } else {
+        bookmarkTagsInput.setAttribute("placeholder", "Tags (e.g. tech, shopping, dev)");
+    }
+}
+
+// Handle adding tags via Comma, Enter, or selecting a Datalist option
+bookmarkTagsInput.addEventListener("input", function(e) {
+    const value = e.target.value;
+
+    // 1. Get a clean array of all available master tags currently in the datalist
+    const availableOptions = Array.from(tagsDatalist.options).map(opt => opt.value.toLowerCase());
+
+    // 2. Check if the user typed a comma OR selected an option exactly matching an available tag
+    if (value.includes(",")) {
+        const parts = value.split(",");
+        const tagToAdd = parts[0].trim().toLowerCase();
+        
+        if (tagToAdd && !activeTags.includes(tagToAdd)) {
+            activeTags.push(tagToAdd);
+            renderInputPills();
+        }
+        bookmarkTagsInput.value = ""; // Clear input for the next tag
+        updateAutocompleteSuggestions();
+    }
+    // This catches mouse clicks and Tab/Enter autocompletes natively!
+    else if (availableOptions.includes(value.trim().toLowerCase())) {
+        const tagToAdd = value.trim().toLowerCase();
+        if (!activeTags.includes(tagToAdd)) {
+            activeTags.push(tagToAdd);
+            renderInputPills();
+        }
+        bookmarkTagsInput.value = ""; // Reset the field so they can type the next tag
+        updateAutocompleteSuggestions();
+    } else {
+        // Still filter regular typing live
+        updateAutocompleteSuggestions();
+    }
+});
+
+// Capture Backspace (to delete last tag) and Enter keys for custom typed text
+bookmarkTagsInput.addEventListener("keydown", function(e) {
+    if (e.key === "Backspace" && bookmarkTagsInput.value === "" && activeTags.length > 0) {
+        activeTags.pop();
+        renderInputPills();
+        updateAutocompleteSuggestions();
+    }
+    if (e.key === "Enter" && bookmarkTagsInput.value.trim() !== "") {
+        e.preventDefault();
+        e.stopPropagation(); // Stop it from triggering the master add-bookmark submission
+        
+        const tagToAdd = bookmarkTagsInput.value.trim().toLowerCase();
+        if (!activeTags.includes(tagToAdd)) {
+            activeTags.push(tagToAdd);
+            renderInputPills();
+        }
+        bookmarkTagsInput.value = "";
+        updateAutocompleteSuggestions();
+    }
+});

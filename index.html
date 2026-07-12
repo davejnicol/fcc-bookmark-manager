@@ -55,7 +55,9 @@
 							"
 							required
 						/>
-						<input type="text" id="bookmark-tags" placeholder="Tags (e.g. tech, shopping, dev)" list="tags-suggestions" />
+						<div class="tag-input-wrapper" id="tag-wrapper">
+							<input type="text" id="bookmark-tags" placeholder="Tags (e.g. tech, shopping, dev)" list="tags-suggestions" autocomplete="off" />
+						</div>
 						<datalist id="tags-suggestions"></datalist>
 						<button id="add-bookmark" class="btn" data-type="btn-primary" type="submit">Add Bookmark</button>
 					</div>
