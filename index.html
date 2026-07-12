@@ -55,13 +55,14 @@
 							"
 							required
 						/>
-						<input type="text" id="bookmark-tags" placeholder="Tags (e.g. tech, shopping, dev)" />
+						<input type="text" id="bookmark-tags" placeholder="Tags (e.g. tech, shopping, dev)" list="tags-suggestions" />
+						<datalist id="tags-suggestions"></datalist>
 						<button id="add-bookmark" class="btn" data-type="btn-primary" type="submit">Add Bookmark</button>
 					</div>
 				</div>
 				<div class="controls-container">
 					<div class="controls">
-						<input type="text" id="search-bar" placeholder="Search bookmarks by name or URL..." />
+						<input type="text" id="search-bar" placeholder="Search by name, URL, or tag..." />
 						<button id="toggle-sort" class="btn" data-sort="alphabetical">Sort: Alphabetical</button>
 					</div>
 				</div>

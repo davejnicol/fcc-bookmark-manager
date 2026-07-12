@@ -1,6 +1,7 @@
 const bookmarkNameInput = document.getElementById("bookmark-name");
 const bookmarkUrlInput = document.getElementById("bookmark-url");
 const bookmarkTagsInput = document.getElementById("bookmark-tags");
+const tagsDatalist = document.getElementById("tags-suggestions");
 const addBookmarkBtn = document.getElementById("add-bookmark");
 const allInputs = document.querySelectorAll(".input-container");
 const bookmarkList = document.getElementById("bookmark-list");
@@ -12,7 +13,10 @@ const toggleSortBtn = document.getElementById("toggle-sort");
 // Track current sort state ('alphabetical' or 'chronological')
 let currentSortState = "alphabetical";
 
-document.addEventListener("DOMContentLoaded", loadBookmarks);
+document.addEventListener("DOMContentLoaded", () => {
+    loadBookmarks();
+    updateAutocompleteSuggestions(); // Populate suggestions on page load
+});
 
 // Watch all inputs for enter keydown submission
 allInputs.forEach(input => {
@@ -39,7 +43,7 @@ toggleSortBtn.addEventListener("click", function() {
     loadBookmarks();
 });
 
-// Listening for click submission
+// Click submission logic
 addBookmarkBtn.addEventListener("click", function () {
     const name = bookmarkNameInput.value.trim();
     const url = bookmarkUrlInput.value.trim();
@@ -82,7 +86,7 @@ addBookmarkBtn.addEventListener("click", function () {
     bookmarkTagsInput.value = "";
 });
 
-// Adding bookmark div element to display
+// Dynamic UI generation with clickable Tag Badges
 function addBookmark(name, url, tags = []) {
     const div = document.createElement("div");
     div.classList.add("bookmark");
@@ -111,6 +115,14 @@ function addBookmark(name, url, tags = []) {
             const tagSpan = document.createElement("span");
             tagSpan.classList.add("tag-pill");
             tagSpan.textContent = tag;
+            tagSpan.style.cursor = "pointer"; // Indicates interactivity
+
+            // Clicking pill sets search text query and filters the view
+            tagSpan.addEventListener("click", function() {
+                searchBar.value = tag;
+                loadBookmarks();
+            });
+
             tagsContainer.appendChild(tagSpan);
         });
         contentDiv.appendChild(tagsContainer);
@@ -163,6 +175,7 @@ function saveBookmak(name, url, tags) {
 
     // Refresh the UI display instantly without reloading the browser
     loadBookmarks();
+    updateAutocompleteSuggestions(); // Recalculate options for the next form entry
 }
 
 // Master function handling search filtering, sorting, and UI rendering from local storage
@@ -175,10 +188,15 @@ function loadBookmarks() {
     // 1. Apply real-time search filter (matches name OR URL)
     const query = searchBar.value.toLowerCase().trim();
     if (query) {
-        bookmarks = bookmarks.filter(bookmark => 
-            bookmark.name.toLowerCase().includes(query) || 
-            bookmark.url.toLowerCase().includes(query)
-        );
+        bookmarks = bookmarks.filter(bookmark => {
+            const matchesName = bookmark.name.toLowerCase().includes(query); 
+            const matchesUrl = bookmark.url.toLowerCase().includes(query);
+
+            // Checks if any array items contain the query text string
+            const matchesTags = bookmark.tags && bookmark.tags.some(tag => tag.includes(query));
+            
+            return matchesName || matchesUrl || matchesTags;
+        });
     }
 
     // 2. Apply sorting condition
@@ -201,4 +219,28 @@ function removeBookmarkFromStorage(name, url) {
     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
     // Reload dynamically to update list lengths or filtered visibility states safely
     loadBookmarks();
+    updateAutocompleteSuggestions(); // Recalculate options since some tags might no longer exist
+}
+
+// Gathers unique tags and builds option markup inside datalist
+function updateAutocompleteSuggestions() {
+    const bookmarks = getBookmarksFromStorage();
+    const uniqueTags = new Set();
+
+    // Loop data properties and insert arrays into Set structure to drop duplicates
+    bookmarks.forEach(bookmark => {
+        if (bookmark.tags) {
+            bookmark.tags.forEach(tag => uniqueTags.add(tag));
+        }
+    });
+
+    // Reset old options list layout markup 
+    tagsDatalist.innerHTML = "";
+
+    // Generate option elements for autocomplete menu UI drop downs
+    uniqueTags.forEach(tag => {
+        const option = document.createElement("option");
+        option.value = tag;
+        tagsDatalist.appendChild(option);
+    });
 }
