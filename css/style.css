@@ -388,7 +388,6 @@ input {
 	}
 }
 
-/* --- Pure CSS Dialog Modal Backdrop Engine --- */
 .modal-dialog {
 	background: var(--background-primary-2);
 	border: 2px solid var(--color-primary);
@@ -444,7 +443,6 @@ input {
 	padding: 0 var(--size-2) var(--size-0);
 	width: 100%;
 }
-/* Style for the pills inside the input field */
 .input-tag-pill {
 	--_pill-bg: var(--color-primary);
 
@@ -459,32 +457,15 @@ input {
 	align-items: center;
 	gap: var(--size-1);
 }
-
 .input-tag-pill .remove-tag-btn {
 	background: transparent;
 	border: none;
 	color: contrast-color(var(--_pill-bg));
 	cursor: pointer;
 }
-
 .input-tag-pill .remove-tag-btn:hover {
 	color: var(--btn-secondary-dark);
 }
-
-.modal-close-btn {
-	/* position: absolute; */
-	/* top: 15px; */
-	/* right: 20px; */
-	/* font-size: 24px; */
-	/* text-decoration: none; */
-	/* color: #666; */
-	/* transition: color 0.1s; */
-}
-
-.modal-close-btn:hover {
-	/* color: #ef4444; */
-}
-
 @keyframes slideIn {
 	from {
 		transform: translateY(40px);
