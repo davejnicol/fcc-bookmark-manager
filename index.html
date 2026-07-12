@@ -39,29 +39,6 @@
 		</header>
 		<main>
 			<div class="app-container">
-				<div class="input-container">
-					<div class="bookmark-creation">
-						<input type="text" id="bookmark-name" placeholder="Bookmark Name" required />
-						<input
-							type="url"
-							id="bookmark-url"
-							placeholder="Bookmark URL"
-							pattern="https://.*"
-							onfocus="
-								if (this.value === '') {
-									this.value = 'https://';
-									setTimeout(() => this.setSelectionRange(8, 8), 0);
-								}
-							"
-							required
-						/>
-						<div class="tag-input-wrapper" id="tag-wrapper">
-							<input type="text" id="bookmark-tags" placeholder="Tags (e.g. tech, shopping, dev)" list="tags-suggestions" autocomplete="off" />
-						</div>
-						<datalist id="tags-suggestions"></datalist>
-						<button id="add-bookmark" class="btn" data-type="btn-primary" type="submit">Add Bookmark</button>
-					</div>
-				</div>
 				<div class="controls-container">
 					<div class="controls">
 						<input type="text" id="search-bar" placeholder="Search by name, URL, or tag..." />
@@ -73,6 +50,47 @@
 					<div class="bookmark-list" id="bookmark-list"></div>
 				</div>
 			</div>
+
+			<button popovertarget="bookmark-modal" class="btn fab-btn" data-type="btn-primary">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus">
+					<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+					<path d="M12 5l0 14"></path>
+					<path d="M5 12l14 0"></path>
+				</svg>
+			</button>
+
+			<dialog id="bookmark-modal" class="modal-dialog" popover>
+				<div class="modal-content">
+					<div class="modal-header">
+						<button popovertarget="bookmark-modal" popovertargetaction="hide" class="btn modal-close-btn">&times;</button>
+						<h2>Add New Bookmark</h2>
+					</div>
+
+					<div class="input-container">
+						<div class="bookmark-creation">
+							<input type="text" id="bookmark-name" placeholder="Bookmark Name" required />
+							<input
+								type="url"
+								id="bookmark-url"
+								placeholder="Bookmark URL"
+								pattern="https://.*"
+								onfocus="
+									if (this.value === '') {
+										this.value = 'https://';
+										setTimeout(() => this.setSelectionRange(8, 8), 0);
+									}
+								"
+								required
+							/>
+							<div class="tag-input-wrapper" id="tag-wrapper">
+								<input type="text" id="bookmark-tags" placeholder="Tags (e.g. tech, shopping, dev)" list="tags-suggestions" autocomplete="off" />
+							</div>
+							<datalist id="tags-suggestions"></datalist>
+							<button id="add-bookmark" class="btn" data-type="btn-primary" type="submit">Add Bookmark</button>
+						</div>
+					</div>
+				</div>
+			</dialog>
 		</main>
 		<footer>
 			&copy;

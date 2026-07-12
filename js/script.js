@@ -96,6 +96,10 @@ addBookmarkBtn.addEventListener("click", function () {
     bookmarkTagsInput.value = "";
     activeTags = []; // Reset our tracking array
     renderInputPills(); // Refresh the DOM view to empty out the pills
+
+    // Hide the popover element natively
+    const modal = document.getElementById("bookmark-modal");
+    modal.hidePopover();
 });
 
 // Dynamic UI generation with clickable Tag Badges
@@ -343,7 +347,7 @@ bookmarkTagsInput.addEventListener("keydown", function(e) {
     if (e.key === "Enter" && bookmarkTagsInput.value.trim() !== "") {
         e.preventDefault();
         e.stopPropagation(); // Stop it from triggering the master add-bookmark submission
-        
+
         const tagToAdd = bookmarkTagsInput.value.trim().toLowerCase();
         if (!activeTags.includes(tagToAdd)) {
             activeTags.push(tagToAdd);
