@@ -35,6 +35,8 @@
 	--size-3: 0.625rem;
 	--size-4: 1rem;
 	--size-5: 1.125rem;
+	--size-6: 1.25rem;
+	--size-7: 1.5rem;
 
 	/* For Light Theme */
 	--bg-primary-light: var(--clr-neutral-100);
@@ -370,12 +372,43 @@ input {
 	box-shadow: 0 4px 12px rgba(from var(--background-secondary) r g b / 0.3);
 	color: var(--color-primary);
 	z-index: 10;
+	transform-style: preserve-3d;
 
 	svg {
 		width: 100%;
 		max-width: 44px;
 		aspect-ratio: 1;
+		transform: translateZ(1px);
 	}
+}
+
+.fab-btn::after {
+	content: attr(aria-label);
+	position: absolute;
+	right: 3.2em;
+	bottom: var(--size-2);
+	width: max-content;
+	padding: var(--size-4) var(--size-7) var(--size-4) var(--size-4);
+
+	background: var(--background-primary-2);
+	border-radius: var(--size-2) 0 0 var(--size-2);
+	font-size: var(--fs-400);
+	opacity: 0;
+	transform: translate3d(40px, 0px, -1px);
+	transform-origin: right center;
+	transition:
+		transform 100ms linear,
+		opacity;
+
+	z-index: 1;
+}
+.fab-btn:hover::after,
+.fab-btn:focus::after {
+	opacity: 0.7;
+	transform: translate3d(0px, 0px, -1px);
+	transition:
+		transform 70ms linear,
+		opacity;
 }
 @media (max-width: 720px) {
 	.fab-btn {
@@ -442,6 +475,11 @@ input {
 	gap: var(--size-2);
 	padding: 0 var(--size-2) var(--size-0);
 	width: 100%;
+}
+/* When the wrapper has tags or active input text, hide its custom placeholder */
+#tag-wrapper.has-tags::before {
+	display: none;
+	visibility: hidden;
 }
 .input-tag-pill {
 	--_pill-bg: var(--color-primary);

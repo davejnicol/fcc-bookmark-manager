@@ -33,9 +33,11 @@ let activeTags = [];
 const tagWrapper = document.getElementById("tag-wrapper");
 
 // Focus the actual input when clicking anywhere on the wrapper container
-tagWrapper.addEventListener("click", () => {
-    bookmarkTagsInput.focus();
-});
+if (tagWrapper) {
+    tagWrapper.addEventListener("click", () => {
+        bookmarkTagsInput.focus();
+    });
+}
 
 // Real-time search listener
 searchBar.addEventListener("input", loadBookmarks);
@@ -56,7 +58,6 @@ toggleSortBtn.addEventListener("click", function() {
 addBookmarkBtn.addEventListener("click", function () {
     const name = bookmarkNameInput.value.trim();
     const url = bookmarkUrlInput.value.trim();
-    // const rawTags = bookmarkTagsInput.value.trim();
 
     if(!name) {
         alert("Please enter a name for the bookmark.");
@@ -66,10 +67,7 @@ addBookmarkBtn.addEventListener("click", function () {
         return;
     }
 
-    // Process comma-separated tags into a clean, lowercase array of strings
-    // const tags = rawTags 
-    //     ? rawTags.split(",").map(tag => tag.trim().toLowerCase()).filter(tag => tag !== "")
-    //     : [];
+    // Preserves the precise order the user selected or typed them
     const tags = [...activeTags];
 
     // Fetch current data to check for duplicates
@@ -87,7 +85,6 @@ addBookmarkBtn.addEventListener("click", function () {
         return; // Stop the function here
     }
 
-    // addBookmark(name, url, tags);
     saveBookmak(name, url, tags);
 
     // Reset Form
@@ -95,11 +92,14 @@ addBookmarkBtn.addEventListener("click", function () {
     bookmarkUrlInput.value = "";
     bookmarkTagsInput.value = "";
     activeTags = []; // Reset our tracking array
-    renderInputPills(); // Refresh the DOM view to empty out the pills
+
+    if (typeof renderInputPills === "function") {
+        renderInputPills(); // Refresh the DOM view to empty out the pills
+    }
 
     // Hide the popover element natively
     const modal = document.getElementById("bookmark-modal");
-    modal.hidePopover();
+    if (modal) modal.hidePopover();
 });
 
 // Dynamic UI generation with clickable Tag Badges
@@ -238,33 +238,29 @@ function removeBookmarkFromStorage(name, url) {
     updateAutocompleteSuggestions(); // Recalculate options since some tags might no longer exist
 }
 
-// Gathers unique tags and builds option markup inside datalist
+// Dynamically extracts all unique tags, sorts them alphabetically, and injects
 function updateAutocompleteSuggestions() {
+    if (!tagsDatalist) return;
+
     const bookmarks = getBookmarksFromStorage();
     const uniqueTags = new Set();
 
-    // Loop data properties and insert arrays into Set structure to drop duplicates
+    // Collect all unique tags from historical storage
     bookmarks.forEach(bookmark => {
-        if (bookmark.tags) {
-            bookmark.tags.forEach(tag => uniqueTags.add(tag));
+        if (bookmark.tags && Array.isArray(bookmark.tags)) {
+            bookmark.tags.forEach(tag => uniqueTags.add(tag.toLowerCase()));
         }
     });
 
-    // Reset old options list layout markup 
+    // Convert Set to Array and sort it alphabetically
+    const sortedTags = Array.from(uniqueTags).sort((a, b) => a.localeCompare(b));
+
+    // Clear and build the UI dropdown select element alphabetically
     tagsDatalist.innerHTML = "";
-
-    // Parse what the user has typed so far
-    const currentTypedValue = bookmarkTagsInput.value.trim().toLowerCase();
-
-    // Generate option elements for autocomplete menu UI drop downs
-    uniqueTags.forEach(tag => {
-        // Only suggest if the tag hasn't already been added as a pill
-        if (!activeTags.includes(tag) && tag.includes(currentTypedValue)) {
-            const option = document.createElement("option");
-            option.value = tag;
-
-            tagsDatalist.appendChild(option);
-        }
+    sortedTags.forEach(tag => {
+        const option = document.createElement("option");
+        option.value = tag;
+        tagsDatalist.appendChild(option);
     });
 }
 
@@ -335,6 +331,13 @@ bookmarkTagsInput.addEventListener("input", function(e) {
         // Still filter regular typing live
         updateAutocompleteSuggestions();
     }
+
+    // Remove placeholder instantly if the user has typed ANY text inside the input
+    if (value.trim() !== "" || activeTags.length > 0) {
+        bookmarkTagsInput.removeAttribute("placeholder");
+    } else {
+        bookmarkTagsInput.setAttribute("placeholder", "Tags (e.g. tech, shopping, dev)");
+    }
 });
 
 // Capture Backspace (to delete last tag) and Enter keys for custom typed text
@@ -343,6 +346,11 @@ bookmarkTagsInput.addEventListener("keydown", function(e) {
         activeTags.pop();
         renderInputPills();
         updateAutocompleteSuggestions();
+
+        // Re-evaluate placeholder state after deleting a pill
+        if (activeTags.length === 0 && bookmarkTagsInput.value === "") {
+            bookmarkTagsInput.setAttribute("placeholder", "Tags (e.g. tech, shopping, dev)");
+        }
     }
     if (e.key === "Enter" && bookmarkTagsInput.value.trim() !== "") {
         e.preventDefault();
