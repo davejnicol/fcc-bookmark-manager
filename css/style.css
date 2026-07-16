@@ -412,12 +412,17 @@ input {
 }
 @media (max-width: 720px) {
 	.fab-btn {
-		bottom: 30px;
 		right: 30px;
 
 		svg {
 			max-width: 32px;
 		}
+	}
+	.fab-btn::after {
+		right: 2.8em;
+		bottom: var(--size-1);
+		font-size: var(--fs-300);
+		padding: var(--size-3) var(--size-6) var(--size-3) var(--size-3);
 	}
 }
 
@@ -475,11 +480,6 @@ input {
 	gap: var(--size-2);
 	padding: 0 var(--size-2) var(--size-0);
 	width: 100%;
-}
-/* When the wrapper has tags or active input text, hide its custom placeholder */
-#tag-wrapper.has-tags::before {
-	display: none;
-	visibility: hidden;
 }
 .input-tag-pill {
 	--_pill-bg: var(--color-primary);
